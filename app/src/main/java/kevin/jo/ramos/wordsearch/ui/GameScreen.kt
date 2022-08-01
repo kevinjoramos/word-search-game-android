@@ -3,23 +3,36 @@ package kevin.jo.ramos.wordsearch
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kevin.jo.ramos.wordsearch.viewmodel.WordSearchViewModel
 
 @Preview
 @Composable
-fun GameScreen() {
+fun GameScreen(viewModel: WordSearchViewModel = viewModel()) {
+
+    val gameboardGrid =
+        viewModel.gameboardGrid.collectAsState(initial = Array(10) { CharArray(10) })
+
     Column(
+
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxSize()
     ) {
         Timer()
         WordBank()
-        GameGrid()
+        GameGrid(gameboardGrid = gameboardGrid)
     }
 }
 
@@ -64,17 +77,27 @@ fun WordBank() {
 }
 
 @Composable
-fun GameGrid() {
+fun GameGrid(gameboardGrid: State<Array<CharArray>>) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .padding(24.dp)
     ) {
-        repeat(12) {
+        for (row in gameboardGrid.value) {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                repeat(10) {
-                    Column() {
-                        Text("A")
+                for (charItem in row) {
+                    Column(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .width(5.dp)
+                    ) {
+                        Text(
+                            text = charItem.toString(),
+                            style = TextStyle(fontSize = 20.sp, textAlign = TextAlign.Center)
+                        )
                     }
                 }
             }

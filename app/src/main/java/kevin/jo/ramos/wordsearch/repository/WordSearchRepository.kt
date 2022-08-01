@@ -2,6 +2,7 @@ package kevin.jo.ramos.wordsearch.repository;
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlin.random.Random
 
 class WordSearchRepository {
 
@@ -12,10 +13,14 @@ class WordSearchRepository {
     }
 
     private fun generateGameboard(): Array<CharArray> {
-        return Array(size = 12, init = {
-            CharArray(size = 10, init = { 'A' }
+        return Array(size = 10, init = {
+            CharArray(size = 10, init = { generateRandomChar() }
             )
         }
         )
+    }
+
+    private fun generateRandomChar(): Char {
+        return Random.nextInt(65, 91).toChar()
     }
 }
