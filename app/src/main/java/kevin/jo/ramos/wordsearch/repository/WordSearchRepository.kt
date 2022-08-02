@@ -7,9 +7,12 @@ import kotlin.random.Random
 class WordSearchRepository {
 
 
-    val gameboardGrid: Flow<Array<CharArray>> = flow {
-        val gameboard = generateGameboard()
-        emit(gameboard)
+    val gameboardGridFlow: Flow<Array<CharArray>> = flow {
+        emit(generateGameboard())
+    }
+
+    val wordListFlow: Flow<List<String>> = flow {
+        emit(generateWordList())
     }
 
     private fun generateGameboard(): Array<CharArray> {
@@ -18,6 +21,10 @@ class WordSearchRepository {
             )
         }
         )
+    }
+
+    private fun generateWordList(): List<String> {
+        return listOf("Hello", "World", "Pizza", "Elephant", "Generate", "Fortress")
     }
 
     private fun generateRandomChar(): Char {

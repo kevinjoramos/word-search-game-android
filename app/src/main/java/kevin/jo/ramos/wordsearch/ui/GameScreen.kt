@@ -1,13 +1,13 @@
 package kevin.jo.ramos.wordsearch
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,22 +16,23 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kevin.jo.ramos.wordsearch.viewmodel.WordSearchViewModel
 
-@Preview
+@Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun GameScreen(viewModel: WordSearchViewModel = viewModel()) {
 
     val gameboardGrid =
-        viewModel.gameboardGrid.collectAsState(initial = Array(10) { CharArray(10) })
+        viewModel.gameboardGridFlow.collectAsState(initial = Array(10) { CharArray(10) })
+    val wordList = viewModel.wordListFlow.collectAsState(initial = listOf())
 
     Column(
 
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxSize()
     ) {
         Timer()
-        WordBank()
+        WordBank(wordList = wordList)
+        Spacer(modifier = Modifier.weight(1f))
         GameGrid(gameboardGrid = gameboardGrid)
     }
 }
@@ -43,32 +44,36 @@ fun Timer() {
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp)
+            .padding(vertical = 8.dp)
     ) {
-        Text(text = "0:00")
+        Text(text = "0:00", style = TextStyle(fontSize = 16.sp))
     }
 }
 
 @Composable
-fun WordBank() {
-    repeat(2) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
+fun WordBank(wordList: State<List<String>>) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp)
+    ) {
+        Card(
+            elevation = 3.dp,
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 108.dp)
+            Column(
+                modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp)
             ) {
-                repeat(3) {
-                    Column {
-                        Text(text = "Word")
+                wordList.value.chunked(3).map { row ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        row.map { word ->
+                            Column() {
+                                Text(text = word)
+                            }
+                        }
                     }
                 }
             }
@@ -82,20 +87,20 @@ fun GameGrid(gameboardGrid: State<Array<CharArray>>) {
         modifier = Modifier
             .padding(24.dp)
     ) {
-        for (row in gameboardGrid.value) {
+        gameboardGrid.value.map { row ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                for (charItem in row) {
+                row.map { letter ->
                     Column(
                         modifier = Modifier
                             .padding(vertical = 8.dp)
                             .width(5.dp)
                     ) {
                         Text(
-                            text = charItem.toString(),
+                            text = letter.toString(),
                             style = TextStyle(fontSize = 20.sp, textAlign = TextAlign.Center)
                         )
                     }

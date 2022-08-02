@@ -6,6 +6,8 @@ import kevin.jo.ramos.wordsearch.repository.WordSearchRepository
 class WordSearchViewModel : ViewModel() {
     private val repository = WordSearchRepository()
 
-    val gameboardGrid = repository.gameboardGrid
+    val gameboardGridFlow = repository.gameboardGridFlow
+
+    val wordListFlow = repository.wordListFlow
 
 }
