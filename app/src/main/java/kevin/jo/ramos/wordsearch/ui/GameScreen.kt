@@ -23,6 +23,7 @@ fun GameScreen(viewModel: WordSearchViewModel = viewModel()) {
     val gameboardGrid =
         viewModel.gameboardGridFlow.collectAsState(initial = Array(10) { CharArray(10) })
     val wordList = viewModel.wordListFlow.collectAsState(initial = listOf())
+    val timeLeft = viewModel.timerFlow.collectAsState(initial = 150)
 
     Column(
 
@@ -30,7 +31,7 @@ fun GameScreen(viewModel: WordSearchViewModel = viewModel()) {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Timer()
+        Timer(timeLeft = timeLeft)
         WordBank(wordList = wordList)
         Spacer(modifier = Modifier.weight(1f))
         GameGrid(gameboardGrid = gameboardGrid)
@@ -38,7 +39,11 @@ fun GameScreen(viewModel: WordSearchViewModel = viewModel()) {
 }
 
 @Composable
-fun Timer() {
+fun Timer(timeLeft: State<Int>) {
+    val minutesString: String = timeLeft.value.floorDiv(60).toString()
+    val seconds: Int = timeLeft.value.mod(60)
+    val secondsString = if (seconds > 9) seconds.toString() else "0$seconds"
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
@@ -46,7 +51,7 @@ fun Timer() {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        Text(text = "0:00", style = TextStyle(fontSize = 16.sp))
+        Text(text = "$minutesString:$secondsString", style = TextStyle(fontSize = 16.sp))
     }
 }
 

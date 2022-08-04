@@ -10,4 +10,6 @@ class WordSearchViewModel : ViewModel() {
 
     val wordListFlow = repository.wordListFlow
 
+    val timerFlow = repository.timerFlow
+
 }

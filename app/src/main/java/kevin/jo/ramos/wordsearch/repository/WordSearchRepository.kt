@@ -1,5 +1,6 @@
 package kevin.jo.ramos.wordsearch.repository;
 
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.random.Random
@@ -13,6 +14,15 @@ class WordSearchRepository {
 
     val wordListFlow: Flow<List<String>> = flow {
         emit(generateWordList())
+    }
+
+    val timerFlow: Flow<Int> = flow {
+        var time = 150
+        while (time > 0) {
+            emit(time)
+            delay(1000L)
+            time--
+        }
     }
 
     private fun generateGameboard(): Array<CharArray> {
